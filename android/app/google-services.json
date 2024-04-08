@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "78327129885",
+    "project_id": "eziline-task-management-79d29",
+    "storage_bucket": "eziline-task-management-79d29.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78327129885:android:cea547688ce39a0fea63f4",
+        "android_client_info": {
+          "package_name": "com.example.eziline_task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaSZ22glhfAdpfvn60OLlQyVb2XZItWfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
