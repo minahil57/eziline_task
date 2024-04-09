@@ -44,13 +44,13 @@ class PhaseList extends ViewModelWidget<HomeViewModel> {
                   List<PhaseModel> phases = viewModel.fetchPhases;
                   if (index == phases.length) {
                     // Render the add button
-                    return IconButton(
+                return  userDetails?.userRole == 'admin' ?   IconButton(
                       onPressed: viewModel.showAddPhaseDialog,
                       icon: const Icon(
                         Icons.add_circle_outline_outlined,
                         color: kcLightGrey,
                       ),
-                    );
+                    ): const SizedBox();
                   } else {
                     final phase = phases[index];
                     final formatStartDate =
@@ -74,7 +74,7 @@ class PhaseList extends ViewModelWidget<HomeViewModel> {
                             Text('$formatStartDate - $formatEndDate',
                                 style: TextStyle(
                                     fontSize: 12.sp, color: kcWhiteColor)),
-                          userDetails?.userRole == 'admin' && userDetails?.userRole != 'manager' ?  IconButton(
+                          userDetails?.userRole == 'admin' || userDetails?.userRole == 'manager' ?  IconButton(
                                 onPressed: () => viewModel.showUpdatePhaseDialog(
                                     phases[index], index),
                                 icon: Icon(Icons.edit_outlined,

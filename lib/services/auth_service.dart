@@ -15,7 +15,7 @@ class AuthService {
   }) async {
     try {
       EasyLoading.show();
-      final UserCredential user = await firebaseAuth.signInWithEmailAndPassword(
+     await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       EasyLoading.dismiss();
 

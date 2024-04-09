@@ -20,7 +20,12 @@ class HomeView extends StackedView<HomeViewModel> {
     Widget? child,
   ) {
     return SafeArea(
-      child: Scaffold(
+
+      // ignore: unrelated_type_equality_checks
+      child: viewModel.setBusy == true ? const Center(
+        child: CircularProgressIndicator(),
+      ):
+      Scaffold(
         backgroundColor: kcBackgroundColor,
         body: SingleChildScrollView(
           child: Padding(
@@ -77,6 +82,12 @@ class HomeView extends StackedView<HomeViewModel> {
         ),
       ),
     );
+  }
+
+  @override
+  void onViewModelReady(HomeViewModel viewModel) {
+    viewModel.onViewModelReady();
+    super.onViewModelReady(viewModel);
   }
 
   @override

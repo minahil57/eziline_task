@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:eziline_task/app/app.dialogs.dart';
 import 'package:eziline_task/app/app.locator.dart';
 import 'package:eziline_task/app/app.router.dart';
@@ -17,9 +19,7 @@ class HomeViewModel extends BaseViewModel {
   final _phaseService = locator<PhaseService>();
   final _navigationService = locator<NavigationService>();
   List<Meeting> combinedMeetings = [];
-
-  @override
-  List<ListenableServiceMixin> get listenableServices => [_phaseService];
+List<ListenableServiceMixin> get listenableServices => [_phaseService];
 
   List<PhaseModel> get fetchPhases {
     return _phaseService.phases;
@@ -31,11 +31,13 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void showUpdatePhaseDialog(PhaseModel phase, index) async {
+    log(phase.phaseId)  ;
     await _dialogService
         .showCustomDialog(variant: DialogType.updatePhase, data: {
       'phase': phase,
       'index': index,
     });
+    rebuildUi();
   }
 
   List<Meeting> getMonthlySource() {
@@ -66,8 +68,11 @@ class HomeViewModel extends BaseViewModel {
 
   void onViewModelReady() async {
     setBusy(true);
-    _phaseService.clearPhases();
-    _phaseService.getPhases();
+
+   await _phaseService.getPhases();
+    fetchPhases;
+  
+    
 
     setBusy(false);
   }

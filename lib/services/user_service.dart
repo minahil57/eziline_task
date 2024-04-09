@@ -7,7 +7,6 @@ import 'package:eziline_task/ui/common/toast.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class UserService {
-  get firebasestore => null;
 
   static Future<bool> storeUserRoleAndName({
     required UserModel userModel,
@@ -37,9 +36,10 @@ class UserService {
   }
 
   Future<UserModel> getUserDetails() async {
-    try {
+  try {
     EasyLoading.show();
-    CollectionReference usersCollection = firebasestore.collection('users');
+
+    CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
 
     QuerySnapshot userSnapshot = await usersCollection
         .where('uid', isEqualTo: firebaseAuth.currentUser!.uid)
@@ -57,10 +57,11 @@ class UserService {
       EasyLoading.dismiss();
       throw Exception("User not found in Firestore");
     }
-    } catch (e) {
-      EasyLoading.dismiss();
-      showToast(message: e.toString());
-      throw Exception(e.toString());
-    }
+  } catch (e) {
+    EasyLoading.dismiss();
+    showToast(message: e.toString());
+    throw Exception(e.toString());
   }
+}
+
 }

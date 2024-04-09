@@ -14,25 +14,17 @@ class UpdatePhaseDialogModel extends BaseViewModel {
   final PhaseModel phaseId;
   final int index;
   UpdatePhaseDialogModel({required this.phaseId, required this.index});
+  
   final _navigationService = locator<NavigationService>();
-  final TextEditingController taskController = TextEditingController();
+   TextEditingController taskController = TextEditingController();
   final _phaseService = locator<PhaseService>();
   PhaseModel? phase;
-
-
   DateTime? start;
   DateTime? end;
   int selectedColorIndex = 0;
   Color selectedColor = kcPrimaryColor;
   List<PhaseModel> phases = [];
 
-  final List<String> items = ['Bulking', 'Deload', 'Cutting', 'Fighting'];
-
-  void savePhaseData() {
-    _phaseService.updatePhase;
-
-    addPhase();
-  }
 
   void updatePhase(phaseId, index) async {
     if (start != end) {
@@ -46,10 +38,10 @@ class UpdatePhaseDialogModel extends BaseViewModel {
         'uid': firebaseAuth.currentUser!.uid,
       };
 
-      bool check = await _phaseService.updatePhase(phaseId, updatedData);
-      if (check == true) {
-        _phaseService.updatePhaseAtIndex(index, updatedData);
-      }
+     await _phaseService.updatePhase(phaseId, updatedData);
+       await _phaseService.updatePhaseAtIndex(index, updatedData);
+       notifyListeners();
+       rebuildUi();
     } else {
       showToast(message: 'End and start dates cannot be the same');
     }
@@ -71,23 +63,12 @@ class UpdatePhaseDialogModel extends BaseViewModel {
 
   void deletePhase(PhaseModel phase, index) async {
     await _phaseService.deletePhase(phase.phaseId);
-    _phaseService.deletelocalPhase(phase, index);
+   await _phaseService.deletelocalPhase(phase, index);
     _navigationService.back();
+    notifyListeners();
     rebuildUi();
   }
 
-  void addPhase() {
-    _phaseService.phases.add(PhaseModel(
-      phaseId: firestore.collection('phase').doc().id,
-      uid: firebaseAuth.currentUser!.uid,
-      phaseName: taskController.text.trim(),
-      startDate: start!,
-      endDate: end!,
-      phaseColor:
-          colors[selectedColorIndex].value.toRadixString(16).padLeft(8, '0'),
-    ));
-    rebuildUi();
-  }
 
   void openEndDateCalendar(BuildContext context) async {
     final picked = await showDatePicker(

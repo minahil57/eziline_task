@@ -66,6 +66,11 @@ class UpdatePhaseDialog extends StackedView<UpdatePhaseDialogModel> {
               ));
   }
 
+@override
+  void onViewModelReady(UpdatePhaseDialogModel viewModel) {
+    viewModel.onViewModelReady();
+    super.onViewModelReady(viewModel);
+  }
   @override
   UpdatePhaseDialogModel viewModelBuilder(BuildContext context) =>
       UpdatePhaseDialogModel(phaseId: request.data['phase'], index: request.data['index']);

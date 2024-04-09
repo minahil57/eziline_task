@@ -47,10 +47,18 @@ class Calender extends ViewModelWidget<HomeViewModel> {
             appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
             showAgenda: true,
             agendaStyle: AgendaStyle(
+              dateTextStyle: TextStyle(
+                fontSize: 12.sp,
+                color: kcWhiteColor,
+              ),
+              dayTextStyle: TextStyle(
+                fontSize: 12.sp,
+                color: kcWhiteColor,
+              ),
               backgroundColor: kcPrimaryColor.withOpacity(0.1),
               appointmentTextStyle: TextStyle(
                 fontSize: 12.sp,
-                color: kcWhiteColor,
+                color: kcPrimaryColor,
               ),
               
             ),

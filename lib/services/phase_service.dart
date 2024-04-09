@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eziline_task/models/phase_model.dart';
-import 'package:eziline_task/services/instances/firebase_instance.dart';
 import 'package:eziline_task/ui/common/toast.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:stacked/stacked.dart';
@@ -55,26 +54,7 @@ class PhaseService with ListenableServiceMixin {
       EasyLoading.show();
 
       // Get reference to the Firestore collection
-      CollectionReference phasesCollection = firestore.collection('phase');
-
-      // // Fetch documents excluding those with phaseName "Phase Name"
-      // QuerySnapshot querySnapshot = await phasesCollection
-      //     .where('phaseName', isNotEqualTo: 'Phase Name')
-      //     .get();
-
-      // // Check if any phase overlaps with the new phase's range
-      // bool phaseExists = querySnapshot.docs.any((doc) {
-      //   PhaseModel existingPhase = PhaseModel.fromSnapshot(doc);
-      //   return (existingPhase.startDate.isBefore(phase.endDate) &&
-      //       existingPhase.endDate.isAfter(phase.startDate));
-      // });
-
-      // if (phaseExists) {
-      //   EasyLoading.dismiss();
-      //   showToast(message: 'Phase already exists in the given time range');
-      //   return false;
-      // } else {
-      // Convert PhaseModel object to a Map
+      CollectionReference phasesCollection = FirebaseFirestore.instance.collection('phase');
       Map<String, dynamic> phaseData = phase.toJson();
 
       // Add the phase to Firestore
@@ -102,33 +82,26 @@ class PhaseService with ListenableServiceMixin {
   }
 
   Future<PhaseModel> fetchPhaseById(String phaseId) async {
-    try {
-      EasyLoading.show();
-      // Get reference to the Firestore document with the specified phaseId
-      DocumentSnapshot phaseSnapshot = await FirebaseFirestore.instance
-          .collection('phase')
-          .doc(phaseId)
-          .get();
+  try {
+    if (phaseId.isEmpty) {
+      throw ArgumentError("phaseId cannot be empty");
+    }
 
-      // Check if the document exists
-      if (phaseSnapshot.exists) {
-        // Convert the document snapshot to a PhaseModel object
-        EasyLoading.dismiss();
-        return PhaseModel.fromSnapshot(phaseSnapshot);
-      } else {
-        // Handle case where document does not exist
+    EasyLoading.show();
 
-        EasyLoading.dismiss();
-        return PhaseModel(
-            phaseName: '',
-            startDate: DateTime.now(),
-            endDate: DateTime.now(),
-            phaseId: phaseId,
-            phaseColor: '',
-            uid: '');
-      }
-    } catch (e) {
-      // Handle error
+    // Get reference to the Firestore document with the specified phaseId
+    DocumentSnapshot phaseSnapshot = await FirebaseFirestore.instance
+        .collection('phase')
+        .doc(phaseId)
+        .get();
+
+    // Check if the document exists
+    if (phaseSnapshot.exists) {
+      // Convert the document snapshot to a PhaseModel object
+      EasyLoading.dismiss();
+      return PhaseModel.fromSnapshot(phaseSnapshot);
+    } else {
+      // Handle case where document does not exist
       EasyLoading.dismiss();
       return PhaseModel(
           phaseName: '',
@@ -138,14 +111,26 @@ class PhaseService with ListenableServiceMixin {
           phaseColor: '',
           uid: '');
     }
+  } catch (e) {
+    // Handle error
+    EasyLoading.dismiss();
+    return PhaseModel(
+        phaseName: '',
+        startDate: DateTime.now(),
+        endDate: DateTime.now(),
+        phaseId: phaseId,
+        phaseColor: '',
+        uid: '');
   }
+}
+
 
   Future<bool> updatePhase(String phaseId, updatedData) async {
     try {
       EasyLoading.show();
 
       // Get reference to the Firestore collection
-      CollectionReference phasesCollection = firestore.collection('phase');
+      CollectionReference phasesCollection = FirebaseFirestore.instance.collection('phase');
 
       // Update the phase with the specified phaseId
       await phasesCollection.doc(phaseId).update(updatedData);
@@ -168,7 +153,7 @@ class PhaseService with ListenableServiceMixin {
       EasyLoading.show();
 
       // Get reference to the Firestore collection
-      CollectionReference phasesCollection = firestore.collection('phase');
+      CollectionReference phasesCollection = FirebaseFirestore.instance.collection('phase');
 
       // Delete the phase with the specified phaseId
       await phasesCollection.doc(phaseId).delete();
@@ -185,31 +170,34 @@ class PhaseService with ListenableServiceMixin {
     }
   }
 
-  Future<List<PhaseModel>> fetchAllPhases() async {
-    List<PhaseModel> phases = [];
-    try {
-      EasyLoading.show();
-      // Get reference to the Firestore collection
 
-      CollectionReference phasesCollection = firestore.collection('phase');
 
-      // Fetch documents excluding those with phaseName "Phase Name"
-      QuerySnapshot querySnapshot = await phasesCollection
-          .where('phaseName', isNotEqualTo: 'Phase Name')
-          .get();
+Future<List<PhaseModel>> fetchAllPhases() async {
+  List<PhaseModel> phases = [];
+  try {
+    EasyLoading.show();
 
-      // Loop through the documents and convert them to PhaseModel objects
-      for (var doc in querySnapshot.docs) {
-        PhaseModel phase = PhaseModel.fromSnapshot(doc);
-        phases.add(phase);
-      }
+    // Get reference to the Firestore collection
+    CollectionReference phasesCollection =
+        FirebaseFirestore.instance.collection('phase');
 
-      EasyLoading.dismiss();
-      return phases;
-    } catch (e) {
-      log('Error fetching phases: $e');
-      EasyLoading.dismiss();
-      return phases; // Return empty list if error occurs
+    // Fetch all documents in the collection
+    QuerySnapshot querySnapshot = await phasesCollection.get();
+
+    // Loop through the documents and convert them to PhaseModel objects
+    for (var doc in querySnapshot.docs) {
+      PhaseModel phase = PhaseModel.fromSnapshot(doc);
+      phases.add(phase);
     }
+
+    EasyLoading.dismiss();
+    return phases;
+  } catch (e) {
+    log('Error fetching phases: $e');
+    EasyLoading.dismiss();
+    // Return empty list if error occurs
+    return phases;
   }
+}
+
 }

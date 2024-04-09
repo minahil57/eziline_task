@@ -33,14 +33,18 @@ Future<void> main() async {
     ..displayDuration = const Duration(seconds: 3)
     ..dismissOnTap = false;
   setupBottomSheetUi();
+  
+  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MainApp());
 }
 
+
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

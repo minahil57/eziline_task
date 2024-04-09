@@ -65,7 +65,6 @@ class LoginViewModel extends BaseViewModel {
        userDetails = await _userService.getUserDetails();
         _navigationService.replaceWithHomeView();
 
-        ///  _navigationService.replaceWithHomeView();
       }
     } else {
       _navigationService.replaceWithLoginView();
